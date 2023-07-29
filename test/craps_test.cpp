@@ -2,6 +2,7 @@
 #include "catch.hpp"
 #include "die.h"
 #include "roll.h" 
+#include "shooter.h" 
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
@@ -60,5 +61,26 @@ TEST_CASE("Rolling the dice 10 times gets values from 2 to 12", "[Roll]") {
         // Assert the rollResult is within the valid range [2, 12]
         REQUIRE(rollResult >= 2);
         REQUIRE(rollResult <= 12);
+    }
+}
+
+TEST_CASE("Shooter returns a Roll with value between 2 and 12", "[Shooter]") {
+    // Create two dice
+    Die die1;
+    Die die2;
+
+    // Create a shooter
+    Shooter shooter;
+
+    for (int i = 0; i < 10; ++i) {
+        // Throw the dice and get the Roll result
+        Roll* roll = shooter.throw_die(die1, die2);
+
+        // Get the roll value
+        int rollValue = roll->roll_value();
+
+        // Assert that the rollValue is between 2 and 12
+        REQUIRE(rollValue >= 2);
+        REQUIRE(rollValue <= 12);
     }
 }
