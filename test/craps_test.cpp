@@ -3,6 +3,8 @@
 #include "die.h"
 #include "roll.h" 
 #include "shooter.h" 
+#include "come_out_phase.h"
+#include "point_phase.h"
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
@@ -83,4 +85,55 @@ TEST_CASE("Shooter returns a Roll with value between 2 and 12", "[Shooter]") {
         REQUIRE(rollValue >= 2);
         REQUIRE(rollValue <= 12);
     }
+}
+
+TEST_CASE("Test ComeOutPhase get outcomes", "[come_out_phase]") {
+    // Create Die objects with 6 sides each
+    Die die1;
+    Die die2;
+
+    // Create a ComeOutPhase object
+    ComeOutPhase comeOutPhase;
+
+    // Create Roll objects with different rolled values using the Die objects
+    Roll roll1(die1, die2); // Total value: 7 (natural)
+    Roll roll2(die1, die2); // Total value: 11 (natural)
+    Roll roll3(die1, die2); // Total value: 2 (craps)
+    Roll roll4(die1, die2); // Total value: 3 (point)
+
+    // Get the outcomes using the ComeOutPhase object
+    RollOutcome outcome1 = comeOutPhase.get_outcome(&roll1);
+    RollOutcome outcome2 = comeOutPhase.get_outcome(&roll2);
+    RollOutcome outcome3 = comeOutPhase.get_outcome(&roll3);
+    RollOutcome outcome4 = comeOutPhase.get_outcome(&roll4);
+
+    // Check if the outcomes match the expected values
+    REQUIRE(outcome1 == RollOutcome::natural);
+    REQUIRE(outcome2 == RollOutcome::natural);
+    REQUIRE(outcome3 == RollOutcome::craps);
+    REQUIRE(outcome4 == RollOutcome::point);
+}
+
+TEST_CASE("Test PointPhase get outcomes", "[point_phase]") {
+    // Create Die objects with 6 sides each
+    Die die1;
+    Die die2;
+
+    // Create a PointPhase object with the point value set to 8
+    PointPhase pointPhase(8);
+
+    // Create Roll objects with different rolled values using the Die objects
+    Roll roll1(die1, die2); // Total value: 8 (point)
+    Roll roll2(die1, die2); // Total value: 7 (seven_out)
+    Roll roll3(die1, die2); // Total value: 4 (nopoint)
+
+    // Get the outcomes using the PointPhase object
+    RollOutcome outcome1 = pointPhase.get_outcome(&roll1);
+    RollOutcome outcome2 = pointPhase.get_outcome(&roll2);
+    RollOutcome outcome3 = pointPhase.get_outcome(&roll3);
+
+    // Check if the outcomes match the expected values
+    REQUIRE(outcome1 == RollOutcome::point);
+    REQUIRE(outcome2 == RollOutcome::seven_out);
+    REQUIRE(outcome3 == RollOutcome::nopoint);
 }
